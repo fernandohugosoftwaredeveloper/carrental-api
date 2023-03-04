@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Car Rental CRUD API
+  description: API for managing cars
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api/v1
+  - url: http://localhost:8080/api/v2
+
+security:
+  - api_key: [ ]
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Car:
+      type: object
+      required:
+        - id
+        - brand
+        - model
+        - available
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the car
+        brand:
+          type: string
+          description: Brand of the car
+        model:
+          type: string
+          description: Model of the car
+        available:
+          type: boolean
+          description: Availability of the car
+
+paths:
+  /cars:
+    post:
+      summary: Create a new car
+      operationId: createCar
+      requestBody:
+        description: Car object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+    put:
+      summary: Update a car by ID
+      operationId: updateCarById
+      requestBody:
+        description: Car object to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Car'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+        '404':
+          description: Car not found
+    delete:
+      summary: Delete a car by ID
+      operationId: deleteCarById
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Car not found
+  /cars/available:
+    get:
+      summary: List all available cars by model or brand
+      operationId: listAvailableCars
+      parameters:
+        - name: model
+          in: query
+          description: Filter by model
+          schema:
+            type: string
+        - name: brand
+          in: query
+          description: Filter by brand
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+        - name: size
+          in: query
+          description: The page size
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
