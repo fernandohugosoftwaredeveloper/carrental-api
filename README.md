@@ -9,8 +9,9 @@
 <h2>Available Endpoints</h2>
 <p>The API has the following endpoints:</p>
 
-Base URL
-The base URL for all endpoints is:
+
+<h2>Base URL</h2>
+<p>The base URL for all endpoints is:</p>
 
 http://localhost:8080/api/v1
 http://localhost:8080/api/v2
