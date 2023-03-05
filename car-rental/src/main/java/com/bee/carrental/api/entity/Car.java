@@ -1,8 +1,13 @@
 package com.bee.carrental.api.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "cars")
 public class Car {
 
@@ -17,4 +22,4 @@ public class Car {
     @Column(name = "available")
     private Boolean available;
 
-}
+   }
