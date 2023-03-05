@@ -1,0 +1,7 @@
+com\bee\carrental\api\config\OpenApiConfig.class
+com\bee\carrental\api\CarRentalApplication.class
+com\bee\carrental\api\config\SecurityConfig.class
+com\bee\carrental\api\entity\Brand.class
+com\bee\carrental\api\entity\Car.class
+com\bee\carrental\api\entity\Model.class
+com\bee\carrental\api\repository\CarRepository.class
