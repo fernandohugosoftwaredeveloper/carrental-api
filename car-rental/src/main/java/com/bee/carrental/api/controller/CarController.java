@@ -1,8 +1,11 @@
 package com.bee.carrental.api.controller;
 
 import com.bee.carrental.api.presenter.CarDTO;
+import com.bee.carrental.api.presenter.CarResponseDTO;
+import com.bee.carrental.api.presenter.CarUpdateDTO;
 import com.bee.carrental.api.service.CarService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,8 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/cars")
+@Tag(name = "Car Rental")
+@CrossOrigin(origins = "*")
 public class CarController {
 
     private final CarService carService;
@@ -23,15 +28,15 @@ public class CarController {
     }
 
     @PostMapping
-    public ResponseEntity<CarDTO> createCar(@Valid @RequestBody CarDTO carDTO) {
-        CarDTO createdCarDTO = carService.createCar(carDTO);
+    public ResponseEntity<CarResponseDTO> createCar(@RequestBody CarDTO carDTO) {
+        System.out.println(carDTO.toString());
+        CarResponseDTO createdCarDTO = carService.createCar(carDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCarDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CarDTO> updateCar(@PathVariable Long id, @Valid @RequestBody CarDTO carDTO) {
-        carDTO.setId(id);
-        CarDTO updatedCarDTO = carService.updateCar(carDTO);
+    @PutMapping
+    public ResponseEntity<CarResponseDTO> updateCar(@Valid @RequestBody CarUpdateDTO carDTO) {
+        CarResponseDTO updatedCarDTO = carService.updateCar(carDTO);
         return ResponseEntity.ok(updatedCarDTO);
     }
 
@@ -42,11 +47,11 @@ public class CarController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<Page<CarDTO>> findAvailableCars(
+    public ResponseEntity<Page<CarResponseDTO>> findAvailableCars(
             @RequestParam(required = false) String modelName,
             @RequestParam(required = false) String brandName,
             @PageableDefault(sort = "id") Pageable pageable) {
-        Page<CarDTO> availableCars = carService.findAvailableCars(modelName, brandName, pageable);
+        Page<CarResponseDTO> availableCars = carService.findAvailableCars(modelName, brandName, pageable);
         return ResponseEntity.ok(availableCars);
     }
 

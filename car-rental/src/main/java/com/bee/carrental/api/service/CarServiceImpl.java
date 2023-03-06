@@ -1,52 +1,84 @@
 package com.bee.carrental.api.service;
 
 import com.bee.carrental.api.entity.Car;
+import com.bee.carrental.api.entity.Model;
 import com.bee.carrental.api.exception.CarAlreadyExistsException;
+import com.bee.carrental.api.exception.CarCreationException;
 import com.bee.carrental.api.exception.CarNotFoundException;
 import com.bee.carrental.api.exception.InvalidCarDataException;
 import com.bee.carrental.api.presenter.CarDTO;
+import com.bee.carrental.api.presenter.CarResponseDTO;
+import com.bee.carrental.api.presenter.CarUpdateDTO;
 import com.bee.carrental.api.repository.CarRepository;
-import io.micrometer.core.instrument.util.StringUtils;
+import com.bee.carrental.api.repository.ModelRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
+    private final ModelRepository modelRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public CarServiceImpl(CarRepository carRepository, ModelMapper modelMapper) {
+    public CarServiceImpl(CarRepository carRepository, ModelRepository modelRepository, ModelMapper modelMapper) {
         this.carRepository = carRepository;
+        this.modelRepository = modelRepository;
         this.modelMapper = modelMapper;
     }
 
-    public CarDTO createCar(CarDTO carDTO) {
+    public CarResponseDTO createCar(CarDTO carDTO) {
         Car car = modelMapper.map(carDTO, Car.class);
         if (Objects.nonNull(car.getId()) && carRepository.existsById(car.getId())) {
             throw new CarAlreadyExistsException("Car with ID " + car.getId() + " already exists");
         }
-        if (StringUtils.isBlank(car.getModel().getBrand().getName()) || StringUtils.isBlank(car.getModel().getName())) {
-            throw new InvalidCarDataException("Brand and model cannot be blank");
+
+        Optional<Model> model = modelRepository.findByNameAndBrandName(car.getModel().getName(), car.getModel().getBrand().getName());
+        if (model.isEmpty()) {
+            throw new InvalidCarDataException("Brand or Model are inconsistent.");
         }
-        Car createdCar = carRepository.save(car);
-        return modelMapper.map(createdCar, CarDTO.class);
+
+        try {
+            car.setModel(model.get());
+            Car createdCar = carRepository.save(car);
+            return modelMapper.map(createdCar, CarResponseDTO.class);
+        } catch (DataAccessException ex) {
+            throw new CarCreationException("Failed to create car", ex);
+        } finally {
+            // liberar qualquer recurso alocado dentro do bloco try, se necessário
+        }
     }
 
-    public CarDTO updateCar(CarDTO carDTO) {
+    public CarResponseDTO updateCar(CarUpdateDTO carDTO) {
         Car car = modelMapper.map(carDTO, Car.class);
 
-        if (Objects.nonNull(car.getId()) && carRepository.existsById(car.getId())) {
-            throw new CarAlreadyExistsException("Car with ID " + car.getId() + " already exists");
+        if (!carRepository.existsById(car.getId())) {
+            throw new CarNotFoundException("Car with ID " + car.getId() + " not found");
         }
-        Car createdCar  = carRepository.save(car);
-        return modelMapper.map(createdCar, CarDTO.class);
+
+        Optional<Model> model = modelRepository.findByNameAndBrandName(car.getModel().getName(), car.getModel().getBrand().getName());
+        if (model.isEmpty()) {
+            throw new InvalidCarDataException("Brand or Model are inconsistent.");
+        }
+
+        try {
+            car.setModel(model.get());
+            Car updatedCar = carRepository.save(car);
+            return modelMapper.map(updatedCar, CarResponseDTO.class);
+        } catch (DataAccessException ex) {
+            throw new CarCreationException("Failed to update car", ex);
+        } finally {
+            // liberar qualquer recurso alocado dentro do bloco try, se necessário
+        }
     }
 
     public void deleteCar(Long id) {
@@ -56,13 +88,15 @@ public class CarServiceImpl implements CarService {
         carRepository.deleteById(id);
     }
 
-    public Page<CarDTO> findAvailableCars(String modelName, String brandName, Pageable pageable) {
+    public Page<CarResponseDTO> findAvailableCars(String modelName, String brandName, Pageable pageable) {
+
+        List<Car> list = carRepository.findAll();
         Page<Car> cars = carRepository.findAvailableCarsByModelOrBrandName(modelName, brandName, pageable);
 
         if (cars.isEmpty()) {
             throw new CarNotFoundException("No available cars found for the provided filters.");
         }
-        return cars.map(car -> modelMapper.map(car, CarDTO.class));
+        return cars.map(car -> modelMapper.map(car, CarResponseDTO.class));
     }
 }
 

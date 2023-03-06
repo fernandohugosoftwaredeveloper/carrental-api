@@ -1,19 +1,18 @@
 package com.bee.carrental.api.presenter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.io.Serializable;
 
 @Data
 @EqualsAndHashCode
 @ToString
-public class CarDTO {
-    @JsonIgnore
+public class CarResponseDTO {
+    @NotNull
     private Long id;
 
     @NotNull
@@ -28,4 +27,3 @@ public class CarDTO {
     @Schema(required = true, description = "Availability of the car")
     private Boolean available;
 }
-
