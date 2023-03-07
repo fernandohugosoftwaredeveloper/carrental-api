@@ -2,6 +2,7 @@ com\bee\carrental\api\exception\CarAlreadyExistsException.class
 com\bee\carrental\api\repository\ModelRepository.class
 com\bee\carrental\api\presenter\CarUpdateDTO.class
 com\bee\carrental\api\exception\CarCreationException.class
+com\bee\carrental\api\exception\ModelAccessException.class
 com\bee\carrental\api\controller\CarController.class
 com\bee\carrental\api\config\ModelMapperConfig.class
 com\bee\carrental\api\CarRentalApplication.class

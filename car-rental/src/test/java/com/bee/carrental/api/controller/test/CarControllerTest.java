@@ -24,9 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -182,7 +180,7 @@ class CarControllerTest {
     }
 
     @Test
-    @DisplayName("Test update car - Invalid request body")
+    @DisplayName("Test update car - Success")
     void testUpdateCarInvalidRequestBody() throws Exception {
         mockMvc.perform(put(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -193,6 +191,7 @@ class CarControllerTest {
     }
 
     @Test
+    @DisplayName("Test delete car by Id- Invalid request body")
     public void testDeleteById() throws Exception {
 
         mockMvc.perform(delete(BASE_URL + "/3")
@@ -201,5 +200,6 @@ class CarControllerTest {
 
         verify(carService, times(1)).deleteCar(new Long(3));
     }
+
 }
 

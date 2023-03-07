@@ -5,7 +5,7 @@ FROM openjdk:11-jdk-slim
 WORKDIR /app
 #
 ## Copia os arquivos do projeto para dentro do container
-COPY target/car-rental-0.0.2-SNAPSHOT.jar app.jar
+COPY target/car-rental-0.0.3-SNAPSHOT.jar app.jar
 #
 ## Compila a aplicação
 #

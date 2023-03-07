@@ -9,6 +9,7 @@ C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\a
 C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\exception\CarNotFoundException.java
 C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\config\SecurityConfig.java
 C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\exception\CarCreationException.java
+C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\exception\ModelAccessException.java
 C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\exception\CarAlreadyExistsException.java
 C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\controller\CarController.java
 C:\Projects\challenge\carrental-api\car-rental\src\main\java\com\bee\carrental\api\service\CarServiceImpl.java

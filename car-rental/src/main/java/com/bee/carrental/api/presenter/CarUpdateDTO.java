@@ -1,11 +1,11 @@
 package com.bee.carrental.api.presenter;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
 import javax.validation.constraints.NotNull;
 
 @Data

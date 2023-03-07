@@ -12,7 +12,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/api/v1/cars/**").permitAll() // permitir acesso a todas as rotas da classe CarController
                 .anyRequest().authenticated() // proteger as outras rotas
                 .and()

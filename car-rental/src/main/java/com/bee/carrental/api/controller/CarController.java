@@ -4,14 +4,13 @@ import com.bee.carrental.api.presenter.CarDTO;
 import com.bee.carrental.api.presenter.CarResponseDTO;
 import com.bee.carrental.api.presenter.CarUpdateDTO;
 import com.bee.carrental.api.service.CarService;
-import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
 

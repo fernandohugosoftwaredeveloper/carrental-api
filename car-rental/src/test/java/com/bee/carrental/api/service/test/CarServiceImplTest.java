@@ -3,7 +3,10 @@ package com.bee.carrental.api.service.test;
 import com.bee.carrental.api.entity.Brand;
 import com.bee.carrental.api.entity.Car;
 import com.bee.carrental.api.entity.Model;
-import com.bee.carrental.api.exception.*;
+import com.bee.carrental.api.exception.CarAlreadyExistsException;
+import com.bee.carrental.api.exception.CarCreationException;
+import com.bee.carrental.api.exception.CarNotFoundException;
+import com.bee.carrental.api.exception.InvalidCarDataException;
 import com.bee.carrental.api.presenter.CarDTO;
 import com.bee.carrental.api.presenter.CarResponseDTO;
 import com.bee.carrental.api.presenter.CarUpdateDTO;
@@ -30,7 +33,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -199,7 +201,8 @@ public class CarServiceImplTest {
         when(modelMapper.map(carEntity, CarResponseDTO.class)).thenReturn(carResponseDTO);
         when(carRepository.existsById(carEntity.getId())).thenReturn(false);
         when(modelRepository.findByNameAndBrandName(Mockito.any(), Mockito.any())).thenReturn(Optional.of(modelEntity));
-        when(carRepository.save(Mockito.any(Car.class))).thenThrow(new DataAccessException("") {});
+        when(carRepository.save(Mockito.any(Car.class))).thenThrow(new DataAccessException("") {
+        });
 
         assertThrows(CarCreationException.class, () -> carService.createCar(carDTO));
     }
@@ -249,7 +252,8 @@ public class CarServiceImplTest {
         when(modelMapper.map(carUpdateDTO, Car.class)).thenReturn(carEntity);
         when(carRepository.existsById(carUpdateDTO.getId())).thenReturn(true);
         when(modelRepository.findByNameAndBrandName(carUpdateDTO.getModel(), carUpdateDTO.getBrand())).thenReturn(Optional.of(modelEntity));
-        when(carRepository.save(Mockito.any(Car.class))).thenThrow(new DataAccessException("Database connection error") {});
+        when(carRepository.save(Mockito.any(Car.class))).thenThrow(new DataAccessException("Database connection error") {
+        });
 
         assertThrows(CarCreationException.class, () -> carService.updateCar(carUpdateDTO));
         verify(carRepository, times(1)).save(Mockito.any(Car.class));
