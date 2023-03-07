@@ -2,10 +2,7 @@ package com.bee.carrental.api.service;
 
 import com.bee.carrental.api.entity.Car;
 import com.bee.carrental.api.entity.Model;
-import com.bee.carrental.api.exception.CarAlreadyExistsException;
-import com.bee.carrental.api.exception.CarCreationException;
-import com.bee.carrental.api.exception.CarNotFoundException;
-import com.bee.carrental.api.exception.InvalidCarDataException;
+import com.bee.carrental.api.exception.*;
 import com.bee.carrental.api.presenter.CarDTO;
 import com.bee.carrental.api.presenter.CarResponseDTO;
 import com.bee.carrental.api.presenter.CarUpdateDTO;
@@ -41,20 +38,14 @@ public class CarServiceImpl implements CarService {
         if (Objects.nonNull(car.getId()) && carRepository.existsById(car.getId())) {
             throw new CarAlreadyExistsException("Car with ID " + car.getId() + " already exists");
         }
-
         Optional<Model> model = modelRepository.findByNameAndBrandName(car.getModel().getName(), car.getModel().getBrand().getName());
-        if (model.isEmpty()) {
-            throw new InvalidCarDataException("Brand or Model are inconsistent.");
-        }
+        car.setModel(model.orElseThrow(() -> new InvalidCarDataException("Brand or Model are inconsistent.")));
 
         try {
-            car.setModel(model.get());
             Car createdCar = carRepository.save(car);
             return modelMapper.map(createdCar, CarResponseDTO.class);
         } catch (DataAccessException ex) {
             throw new CarCreationException("Failed to create car", ex);
-        } finally {
-            // liberar qualquer recurso alocado dentro do bloco try, se necessário
         }
     }
 
@@ -66,18 +57,13 @@ public class CarServiceImpl implements CarService {
         }
 
         Optional<Model> model = modelRepository.findByNameAndBrandName(car.getModel().getName(), car.getModel().getBrand().getName());
-        if (model.isEmpty()) {
-            throw new InvalidCarDataException("Brand or Model are inconsistent.");
-        }
+        car.setModel(model.orElseThrow(() -> new InvalidCarDataException("Brand or Model are inconsistent.")));
 
         try {
-            car.setModel(model.get());
             Car updatedCar = carRepository.save(car);
             return modelMapper.map(updatedCar, CarResponseDTO.class);
         } catch (DataAccessException ex) {
             throw new CarCreationException("Failed to update car", ex);
-        } finally {
-            // liberar qualquer recurso alocado dentro do bloco try, se necessário
         }
     }
 

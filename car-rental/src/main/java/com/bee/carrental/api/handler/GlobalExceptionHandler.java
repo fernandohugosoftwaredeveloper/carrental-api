@@ -33,4 +33,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleCarCreationException(CarCreationException me, Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(me.getMessage());
     }
+
+    @ExceptionHandler(ModelAccessException.class)
+    public ResponseEntity<Object> handleModelAccessException(ModelAccessException me, Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(me.getMessage());
+    }
 }
