@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.bee.carrental.api.controller.test.CarControllerTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.561 s - in com.bee.carrental.api.controller.test.CarControllerTest

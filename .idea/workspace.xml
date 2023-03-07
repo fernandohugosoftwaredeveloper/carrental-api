@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="833c81f9-1576-4d6e-957d-04a0c130dd1c" name="Changes" comment="" />
+    <list default="true" id="833c81f9-1576-4d6e-957d-04a0c130dd1c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/car-rental/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/car-rental/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/car-rental/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/car-rental/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/car-rental/src/main/java/com/bee/carrental/api/CarRentalApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/car-rental/src/main/java/com/bee/carrental/api/CarRentalApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/car-rental/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/car-rental/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/car-rental/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/car-rental/target/classes/application.properties" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
