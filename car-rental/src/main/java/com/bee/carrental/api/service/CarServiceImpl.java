@@ -76,7 +76,6 @@ public class CarServiceImpl implements CarService {
 
     public Page<CarResponseDTO> findAvailableCars(String modelName, String brandName, Pageable pageable) {
 
-        List<Car> list = carRepository.findAll();
         Page<Car> cars = carRepository.findAvailableCarsByModelOrBrandName(modelName, brandName, pageable);
 
         if (cars.isEmpty()) {

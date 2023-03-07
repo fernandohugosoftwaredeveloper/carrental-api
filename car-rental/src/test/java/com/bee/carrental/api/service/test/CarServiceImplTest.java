@@ -20,7 +20,13 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -247,7 +253,6 @@ public class CarServiceImplTest {
 
         assertThrows(CarCreationException.class, () -> carService.updateCar(carUpdateDTO));
         verify(carRepository, times(1)).save(Mockito.any(Car.class));
-
     }
 
     @Test
@@ -261,8 +266,56 @@ public class CarServiceImplTest {
 
         assertThrows(CarNotFoundException.class, () -> carService.updateCar(carUpdateDTO));
         verify(carRepository, times(1)).existsById(anyLong());
+    }
 
+    @Test
+    public void testFindAvailableCars_AvailableCarsFound() {
+
+        String modelName = "Fusion";
+        String brandName = "Ford";
+        int pageNumber = 0;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        List<Car> carList = new ArrayList<>();
+        Car car = new Car();
+        car.setId(1L);
+        car.setAvailable(true);
+        carList.add(car);
+        Page<Car> page = new PageImpl<>(carList);
+
+        when(carRepository.findAvailableCarsByModelOrBrandName(modelName, brandName, pageable)).thenReturn(page);
+
+        CarResponseDTO carResponseDTO = new CarResponseDTO();
+        carResponseDTO.setId(car.getId());
+        carResponseDTO.setAvailable(car.getAvailable());
+
+        when(modelMapper.map(car, CarResponseDTO.class)).thenReturn(carResponseDTO);
+
+        Page<CarResponseDTO> result = carService.findAvailableCars(modelName, brandName, pageable);
+
+        // assert
+        assertEquals(page.getNumber(), result.getNumber());
+        assertEquals(page.getSize(), result.getSize());
+        assertEquals(page.getTotalElements(), result.getTotalElements());
+        assertEquals(page.getTotalPages(), result.getTotalPages());
+        assertEquals(carResponseDTO.getId(), result.getContent().get(0).getId());
+        assertEquals(carResponseDTO.getAvailable(), result.getContent().get(0).getAvailable());
     }
 
 
+    @Test
+    public void testFindAvailableCars_NoAvailableCarsFound() {
+        // arrange
+        String modelName = "Fusion";
+        String brandName = "Ford";
+        int pageNumber = 0;
+        int pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<Car> page = Page.empty();
+        when(carRepository.findAvailableCarsByModelOrBrandName(modelName, brandName, pageable)).thenReturn(page);
+
+        assertThrows(CarNotFoundException.class, () -> carService.findAvailableCars(modelName, brandName, pageable));
+    }
 }
