@@ -27,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CarServiceImplTest {
 
@@ -93,9 +92,9 @@ public class CarServiceImplTest {
     private void createCarUpdateDTO() {
         this.carUpdateDTO = new CarUpdateDTO();
         carUpdateDTO.setId(1L);
-        carUpdateDTO.setBrand("Chevrolet");
-        carUpdateDTO.setModel("Camaro");
-        carUpdateDTO.setAvailable(false);
+        carUpdateDTO.setBrand("Ford");
+        carUpdateDTO.setModel("Fusion");
+        carUpdateDTO.setAvailable(true);
 
     }
 
@@ -127,7 +126,7 @@ public class CarServiceImplTest {
         when(carRepository.existsById(carId)).thenReturn(true);
 
         carService.deleteCar(carId);
-        verify(carRepository, Mockito.times(1)).deleteById(carId);
+        verify(carRepository, times(1)).deleteById(carId);
     }
 
     @Test
@@ -169,7 +168,6 @@ public class CarServiceImplTest {
 
     @Test
     public void testCreateCarWithExistingId() {
-        // Arrange
         carDTO.setId(1L);
         when(modelMapper.map(carDTO, Car.class)).thenReturn(carEntity);
         when(modelRepository.findByNameAndBrandName(anyString(), anyString())).thenReturn(Optional.empty());
@@ -180,7 +178,6 @@ public class CarServiceImplTest {
 
     @Test
     public void testCreateCarAlreadyExistsException() {
-        // Arrange
         carDTO.setId(1L);
         when(modelMapper.map(carDTO, Car.class)).thenReturn(carEntity);
         when(modelRepository.findByNameAndBrandName(anyString(), anyString())).thenReturn(Optional.empty());
@@ -192,7 +189,6 @@ public class CarServiceImplTest {
 
     @Test
     public void testCreateCarFailureWithSaveException() {
-        // Arrange
         when(modelMapper.map(carDTO, Car.class)).thenReturn(carEntity);
         when(modelMapper.map(carEntity, CarResponseDTO.class)).thenReturn(carResponseDTO);
         when(carRepository.existsById(carEntity.getId())).thenReturn(false);
@@ -200,6 +196,72 @@ public class CarServiceImplTest {
         when(carRepository.save(Mockito.any(Car.class))).thenThrow(new DataAccessException("") {});
 
         assertThrows(CarCreationException.class, () -> carService.createCar(carDTO));
+    }
+
+    @Test
+    public void testUpdateCar_CarExistsAndDataIsValid() {
+        Long carId = 1L;
+        when(carRepository.existsById(anyLong())).thenReturn(true);
+        when(modelMapper.map(carUpdateDTO, Car.class)).thenReturn(carEntity);
+        when(modelMapper.map(carEntity, CarResponseDTO.class)).thenReturn(carResponseDTO);
+        when(modelRepository.findByNameAndBrandName(Mockito.any(), Mockito.any())).thenReturn(Optional.of(modelEntity));
+        when(carRepository.save(Mockito.any())).thenReturn(carEntity);
+
+        CarResponseDTO responseDTO = carService.updateCar(carUpdateDTO);
+
+        verify(modelMapper, times(1)).map(carUpdateDTO, Car.class);
+        verify(carRepository, times(1)).existsById(carId);
+        verify(carRepository, times(1)).save(carEntity);
+        verify(modelMapper, times(1)).map(carEntity, CarResponseDTO.class);
+
+        assertEquals(carEntity.getId(), responseDTO.getId());
+        assertEquals(carEntity.getModel().getBrand().getName(), responseDTO.getBrand());
+        assertEquals(carEntity.getModel().getName(), responseDTO.getModel());
+        assertEquals(carEntity.getAvailable(), responseDTO.getAvailable());
+        assertEquals(carResponseDTO, responseDTO);
+    }
+
+    @Test
+    public void testUpdateCar_BrandOrModelAreInconsistent() {
+
+        carUpdateDTO.setId(1L);
+        when(modelMapper.map(carUpdateDTO, Car.class)).thenReturn(carEntity);
+        when(modelRepository.findByNameAndBrandName(anyString(), anyString())).thenReturn(Optional.empty());
+        when(carRepository.existsById(anyLong())).thenReturn(true);
+
+        assertThrows(InvalidCarDataException.class, () -> carService.updateCar(carUpdateDTO));
+        verify(modelMapper, times(1)).map(carUpdateDTO, Car.class);
+        verify(carRepository, times(1)).existsById(carUpdateDTO.getId());
+        verify(modelRepository, times(1)).findByNameAndBrandName(carUpdateDTO.getModel(), carUpdateDTO.getBrand());
+        verifyNoMoreInteractions(carRepository, modelRepository, modelMapper);
+    }
+
+    @Test
+    public void testUpdateCar_ExceptionOccursWhileUpdatingCar() {
+        // Arrange
+        carUpdateDTO.setId(1L);
+        when(modelMapper.map(carUpdateDTO, Car.class)).thenReturn(carEntity);
+        when(carRepository.existsById(carUpdateDTO.getId())).thenReturn(true);
+        when(modelRepository.findByNameAndBrandName(carUpdateDTO.getModel(), carUpdateDTO.getBrand())).thenReturn(Optional.of(modelEntity));
+        when(carRepository.save(Mockito.any(Car.class))).thenThrow(new DataAccessException("Database connection error") {});
+
+        assertThrows(CarCreationException.class, () -> carService.updateCar(carUpdateDTO));
+        verify(carRepository, times(1)).save(Mockito.any(Car.class));
+
+    }
+
+    @Test
+    public void testUpdateCar_CarNotFoundException() {
+        // Arrange
+        carUpdateDTO.setId(9L);
+        when(modelMapper.map(carUpdateDTO, Car.class)).thenReturn(carEntity);
+        when(carRepository.existsById(carUpdateDTO.getId())).thenReturn(false);
+        when(modelRepository.findByNameAndBrandName(carUpdateDTO.getModel(), carUpdateDTO.getBrand())).thenReturn(Optional.of(modelEntity));
+
+
+        assertThrows(CarNotFoundException.class, () -> carService.updateCar(carUpdateDTO));
+        verify(carRepository, times(1)).existsById(anyLong());
+
     }
 
 
