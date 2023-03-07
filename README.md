@@ -6,6 +6,9 @@
 
 <h2>Documentation</h2>
 <p>The API documentation is available in OpenAPI Specification (OAS) format in the API root at <code>/api-docs</code>.</p>
+<h2>Swagger Security</h2>
+<p><code>USER: user</code></p>
+<p><code>PASSWORD: password</code></p>
 <h2>Available Endpoints</h2>
 <p>The API has the following endpoints:</p>
 
@@ -66,6 +69,10 @@ http://localhost:8080/api/v2
     </tr>
   </tbody>
 </table>
+<h4>Curl Example</h4>
+<pre>
+curl --location --request GET 'http://localhost:8080/api/v1/cars/available?modelName=Fusion&brandName=Ford&page=0&size=10&sort=id,asc' \
+--header 'Cookie: JSESSIONID=58AD1A7FA0029E896D3DE28CD1BB36F9'</pre>
 
 <h4>Answers</h4>
 <table><thead><tr><th>Código</th><th>Description</th><th>Schema</th></tr></thead><tbody><tr><td>200</td><td>OK</td><td>array of car objects <a href="#car" target="_new">Car</a></td></tr><tr><td>401</td><td>Unauthorized</td><td></td></tr><tr><td>500</td><td>Internal Server Error</td><td></td></tr></tbody></table>
@@ -97,8 +104,8 @@ http://localhost:8080/api/v2
 
 <h3>Docker</h3>
 <h4>go to the root of the project</h4>
-$ docker-compose up -d
-## check the status
-$ docker-compose ps
+<p>$ docker-compose up<p>
+<p>## check the status<p>
+<p>$ docker-compose ps<p>
 
 
